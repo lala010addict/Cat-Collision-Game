@@ -21,13 +21,14 @@ var updateScore = function() {
   d3.select('.scoreboard .collisions span').text(collisionCount);
 }
 
+
 //create the board
 
 var board = d3.select('.board')  //select the DIV Class board
     .append('svg') //appending the svg element
     .attr('height',settings.h) //
     .attr('width',settings.w)
-   .style('display', 'block')
+    .style('display', 'block')
     .style('margin', 'auto');
 
 //Enemy Data
@@ -71,6 +72,7 @@ var player = board.append('image')
   .attr('width', '100px')
   .attr('xlink:href','https://media3.giphy.com/media/3oGRFkmoqoui9nzL2g/giphy.gif')
 
+
 var checkForCollsion = function(enemy) {
   var enemyCx = parseFloat(enemy.attr('cx'));
   var enemyCy = parseFloat(enemy.attr('cy'));
@@ -82,3 +84,36 @@ var checkForCollsion = function(enemy) {
     renderScore();
   }
 };
+
+
+// MAKE THE PLAYER DRAGGABLE
+var _checkInBounds = function(eventNum, isX) {
+  var min = 0;
+  var max;
+
+  if (isX) {
+    max = settings.w - parseInt(d3.select('image').attr('width'));
+  } else {
+    max = settings.h - parseInt(d3.select('image').attr('height'));
+  }
+
+  if (eventNum < min) {
+    return 0;
+  } else if (eventNum > max) {
+    return max;
+  } else {
+    return eventNum;
+  }
+};
+
+//made a mover function
+
+var mover = function() {
+  d3.select('image')
+    .attr("x", _checkInBounds(d3.event.x, true))
+    .attr("y", _checkInBounds(d3.event.y, false));
+};
+
+var drag = d3.behavior.drag().on("drag", mover);
+
+d3.select("image").call(drag);
