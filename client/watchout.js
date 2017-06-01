@@ -1,5 +1,5 @@
 //General Settings
-
+//made the board the size of the window
 var settings = {
   w: window.innerWidth,
   h: window.innerHeight,
