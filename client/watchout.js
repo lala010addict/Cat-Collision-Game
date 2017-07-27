@@ -16,9 +16,9 @@ var gameStats = {
 var board = d3.select('body').append('svg')
   .attr('height', gameOptions.height)
   .attr('width', gameOptions.width)
-  .style('background-color', 'teal')
-   .style('display', 'block')
-    .style('margin', 'auto');
+  // .style('backgroundImage', './carpet.jpg')
+     .style('display', 'block')
+     .style('margin', 'auto');
 
 
 // ENEMY STUFF
@@ -35,7 +35,10 @@ var enemies = board.selectAll('.enemies')
   .attr('cy', function() {
     return (Math.random() * gameOptions.width);
   })
-  .attr('fill', 'deepPink');
+  .attr("height", "50px")
+  .attr("width", "50px")
+  .attr("xlink:href", "./vacuum.jpg")
+
 
 
 var moveEnemies = function() {
@@ -70,7 +73,7 @@ var player = board.append("image")
   .attr("y", 130)
   .attr("height", "50px")
   .attr("width", "50px")
-  .attr("xlink:href", "http://i.giphy.com/JF98Z2md85OFi.gif");
+  .attr("xlink:href", "./XiaoFrankie.jpg");
 
 var checkCollision = function(enemy) {
   var enemyCx = parseFloat(enemy.attr('cx'));
@@ -130,7 +133,7 @@ var increaseScore = function() {
 };
 
 var renderScore = function() {
-  d3.select('.current span').text(gameStats.score);
+  d3.select('.current span').text(gameStats.score)
 };
 
 var resetScore = function() {
