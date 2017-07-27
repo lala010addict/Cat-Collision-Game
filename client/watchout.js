@@ -1,90 +1,96 @@
-//General Settings
-//made the board the size of the window
-var settings = {
-  w: window.innerWidth,
-  h: window.innerHeight,
-  radius: 15,
+// GENERAL STUFF
+// define gameOptions
+var gameOptions = {
+  height: 550,
+  width: 900,
   nEnemies: 30,
-  duration: 1500
+  padding: 20
 };
 
-// var mouse = {x: settings.w/2, y:settings.h/2};
+var gameStats = {
+  score: 0,
+  bestScore: 0
+};
 
-var score = 0;
-var highScore = 0;
-var collisionCount = 0;
-
-
-var updateScore = function() {
-  d3.select('.scoreboard .current span').text(score);
-  d3.select('.scoreboard .highscore span').text(highScore);
-  d3.select('.scoreboard .collisions span').text(collisionCount);
-}
-
-
-//create the board
-
-var board = d3.select('.board')  //select the DIV Class board
-    .append('svg') //appending the svg element
-    .attr('height',settings.h) //
-    .attr('width',settings.w)
-    .style('display', 'block')
+// create board
+var board = d3.select('body').append('svg')
+  .attr('height', gameOptions.height)
+  .attr('width', gameOptions.width)
+  .style('background-color', 'teal')
+   .style('display', 'block')
     .style('margin', 'auto');
 
-//Enemy Data
-var enemies = board.selectAll('enemies')
-  .data(d3.range(settings.nEnemies))
+
+// ENEMY STUFF
+// create enemies
+var enemies = board.selectAll('.enemies')
+  .data(d3.range(gameOptions.nEnemies))
   .enter()
   .append('ellipse')
-  .attr('rx',5)
-  .attr('ry',14)
+  .attr('rx', 5)
+  .attr('ry', 14)
   .attr('cx', function() {
-    return (Math.random() * settings.w);
+    return (Math.random() * gameOptions.width);
   })
-  .attr('cy',function() {
-    return (Math.random() * settings.w)
+  .attr('cy', function() {
+    return (Math.random() * gameOptions.width);
   })
-  .attr('fill','deepPink');
+  .attr('fill', 'deepPink');
+
 
 var moveEnemies = function() {
   enemies.transition()
-  .duration(settings.duration)
-  .attr('cx',function() {
-    return (Math.random() * settings.w);
-  })
-  .attr('cy', function() {
-    return (Math.random() * settings.w);
-  })
-  // .tween('custom',tweenWithCollisionDetection)
-}
+    .duration(2000)
+    .attr('cx', function() {
+      return (Math.random() * gameOptions.width);
+    })
+    .attr('cy', function() {
+      return (Math.random() * gameOptions.width);
+    })
+    .tween('custom', tweenWithCollisionDetection);
+};
 
-// MAKE STUFF MOVE!!
-// setInterval(transformOriginRotation, 2000);
-setInterval(moveEnemies, 2000);
-// setInterval(increaseScore, 1000);
+var boxes = document.querySelectorAll('ellipse');
+var twween = TweenLite.to({}, 1, {});
 
-//Player
-
-var player = board.append('image')
-  .attr('x',settings.w/2)
-  .attr('y',settings.h/2)
-  .attr('height', '100px')
-  .attr('width', '100px')
-  .attr('xlink:href','https://media3.giphy.com/media/3oGRFkmoqoui9nzL2g/giphy.gif')
+function transformOriginRotation() {
+  twween.seek(0).kill(); //reset
+  twween = TweenLite.to(boxes, 1, {
+    rotation: 360,
+    transformOrigin: "50% 50%"
+  });
+  tweenCode.innerHTML = 'TweenLite.to(".enemies", 1, {rotation:360, transformOrigin:"50% 50%"});'
+};
 
 
-var checkForCollsion = function(enemy) {
+
+// PLAYER STUFF
+var player = board.append("image")
+  .attr("x", 180)
+  .attr("y", 130)
+  .attr("height", "50px")
+  .attr("width", "50px")
+  .attr("xlink:href", "http://i.giphy.com/JF98Z2md85OFi.gif");
+
+var checkCollision = function(enemy) {
   var enemyCx = parseFloat(enemy.attr('cx'));
   var enemyCy = parseFloat(enemy.attr('cy'));
-  var playerCx = parseFloat(enemy.attr('x'));
-  var playerCy = parseFloat(enemy.attr('y'));
+  var playerCx = parseFloat(player.attr('x'));
+  var playerCy = parseFloat(player.attr('y'));
 
-   if (Math.hypot(enemyCx - playerCx, enemyCy - playerCy) <= 25) {
+  if (Math.hypot(enemyCx - playerCx, enemyCy - playerCy) <= 25) {
     resetScore();
     renderScore();
   }
 };
 
+var tweenWithCollisionDetection = function(endData) {
+  var enemy = d3.select(this);
+
+  return function(t) {
+    checkCollision(enemy);
+  };
+};
 
 // MAKE THE PLAYER DRAGGABLE
 var _checkInBounds = function(eventNum, isX) {
@@ -92,9 +98,9 @@ var _checkInBounds = function(eventNum, isX) {
   var max;
 
   if (isX) {
-    max = settings.w - parseInt(d3.select('image').attr('width'));
+    max = gameOptions.width - parseInt(d3.select('image').attr('width'));
   } else {
-    max = settings.h - parseInt(d3.select('image').attr('height'));
+    max = gameOptions.height - parseInt(d3.select('image').attr('height'));
   }
 
   if (eventNum < min) {
@@ -106,8 +112,6 @@ var _checkInBounds = function(eventNum, isX) {
   }
 };
 
-//made a mover function
-
 var mover = function() {
   d3.select('image')
     .attr("x", _checkInBounds(d3.event.x, true))
@@ -117,3 +121,27 @@ var mover = function() {
 var drag = d3.behavior.drag().on("drag", mover);
 
 d3.select("image").call(drag);
+
+
+// SCORE STUFF
+var increaseScore = function() {
+  gameStats.score++;
+  renderScore();
+};
+
+var renderScore = function() {
+  d3.select('.current span').text(gameStats.score);
+};
+
+var resetScore = function() {
+  if (gameStats.score > gameStats.bestScore) {
+    gameStats.bestScore = gameStats.score;
+    d3.select('.high span').text(gameStats.bestScore);
+  }
+  gameStats.score = 0;
+};
+
+// MAKE STUFF MOVE!! :D
+setInterval(transformOriginRotation, 2000);
+setInterval(moveEnemies, 2000);
+setInterval(increaseScore, 1000);
