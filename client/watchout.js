@@ -1,8 +1,8 @@
 // GENERAL STUFF
 // define gameOptions
 var gameOptions = {
-  height: 550,
-  width: 900,
+  height: window.innerHeight-100,
+  width: window.innerWidth-100,
   nEnemies: 30,
   padding: 20
 };
@@ -71,8 +71,8 @@ function transformOriginRotation() {
 var player = board.append("image")
   .attr("x", 180)
   .attr("y", 130)
-  .attr("height", "50px")
-  .attr("width", "50px")
+  .attr("height", "100px")
+  .attr("width", "100px")
   .attr("xlink:href", "./XiaoFrankie.jpg");
 
 var checkCollision = function(enemy) {
