@@ -1,8 +1,8 @@
 // GENERAL STUFF
 // define gameOptions
 var gameOptions = {
-  height: window.innerHeight-100,
-  width: window.innerWidth-100,
+  height: window.innerHeight - 100,
+  width: window.innerWidth - 100,
   nEnemies: 30,
   padding: 20
 };
@@ -17,8 +17,8 @@ var board = d3.select('body').append('svg')
   .attr('height', gameOptions.height)
   .attr('width', gameOptions.width)
   // .style('backgroundImage', './carpet.jpg')
-     .style('display', 'block')
-     .style('margin', 'auto');
+  .style('display', 'block')
+  .style('margin', 'auto');
 
 
 // ENEMY STUFF

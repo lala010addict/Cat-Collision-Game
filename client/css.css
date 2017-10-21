@@ -1,5 +1,5 @@
 .scoreboard {
-  background-color: white;
+  background-color: pink;
   padding: 10px;
   margin: -10px;
 }
@@ -8,12 +8,12 @@
   font-size: 30px;
   font-weight: bold;
   position: fixed;
-  top:0;
+  top: 0;
   left: 45%;
 }
 
 p {
-  padding:0;
+  padding: 0;
   position: fixed;
   left: 42%;
   font-size: 18px;
